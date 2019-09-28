@@ -17,7 +17,9 @@ class MyApp(App):
     def build(self):
         username = urllib.parse.quote_plus('testuser')
         password = urllib.parse.quote_plus('test')
-        client = MongoClient("mongodb+srv://%s:%s@hackathon2019-umbc-262bo.gcp.mongodb.net/" % (username, password))
+        client = MongoClient(
+            "mongodb+srv://%s:%s@hackathon2019-umbc-262bo.gcp.mongodb.net/" %
+            (username, password))
         db = client["sample_airbnb"]
 
         return Label(text = str(db.list_collection_names()))
