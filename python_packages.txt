@@ -1,0 +1,27 @@
+numpy
+
+    A numerical Python package for array manipulation. This package is the
+    bread and butter of data science.
+
+pandas
+
+    "pandas" stands for "panel data sets". pandas DataFrames combine the best
+    of a Python dictionary object and a numpy array. These are very much like
+    text-based CSVs.
+
+
+scipy
+
+    A Python package for scientific data processing. Often used for things like
+    interpolation, curve fitting, data gridding, etc.
+
+
+matplotlib
+
+    A Python package for basic data visualization; emulates the MATLAB API.
+
+
+requests
+
+    A Python package for making HTTP GET/POST requests. This is often used for
+    web scraping.
