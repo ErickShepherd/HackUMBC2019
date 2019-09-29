@@ -19,9 +19,10 @@ Summary:
 
 # Third party imports.
 import numpy as np
-
-# Third party imports.
 from midiutil.MidiFile import MIDIFile
+
+# Local application imports.
+import music_scale
 
 # Dunder definitions.
 __author__  = ["Thomas Owens", "Erick Shepherd"]
