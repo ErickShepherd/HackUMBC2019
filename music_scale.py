@@ -4,7 +4,7 @@ A module to generate arbitrary music scales
 
 Module metadata:
 
-    Author:         Erick Shepherd
+    Author 01:      Erick Shepherd (ErickShepherd@UMBC.edu)
     E-mail:         ErickShepherd@UMBC.edu
     Event:          HackUMBC Fall 2019
     Team:           Swan Song
@@ -18,24 +18,30 @@ Summary:
 
 """
 
+# Standard library imports.
+from itertools import combinations
+
 # Third party imports.
 import pyaudio
+import numpy as np
 import pandas as pd
 
 # Local application imports.
 import wavefunctions
 
 # Dunder definitions.
-__author__  = "Erick Shepherd"
+__author__  = ["Erick Shepherd"]
 __version__ = "1.1.0"
 
 # Constant definitions.
-SUBCONTRA_C = 16.352
-SEMITONES   = 12
-OCTAVES     = 9
-NOTE_NAMES  = ["C",  "C#", "D",  "D#",
-               "E",  "F",  "F#", "G",
-               "G#", "A",  "A#", "B"]
+MIDI_MINIMUM = 0
+MIDI_MAXIMUM = 127
+SUBCONTRA_C  = 16.352
+SEMITONES    = 12
+OCTAVES      = 9
+NOTE_NAMES   = ["C",  "C#", "D",  "D#",
+                "E",  "F",  "F#", "G",
+                "G#", "A",  "A#", "B"]
 
 
 def compute_frequency(octave,
@@ -69,12 +75,12 @@ def generate_scale_frequencies(names     = NOTE_NAMES,
     semitones        = len(names)
     note_frequencies = {}
     
-    for semitone, name in enumerate(names):
+    for semitone, name in enumerate(names, start = 1):
         
         note_frequencies[name] = []
         
-        for octave in range(octaves):
-            
+        for octave in range(-1, octaves + 1):
+                        
             frequency = compute_frequency(octave,
                                           semitone,
                                           semitones,
@@ -83,6 +89,7 @@ def generate_scale_frequencies(names     = NOTE_NAMES,
             note_frequencies[name].append(frequency)
             
     note_frequencies = pd.DataFrame(note_frequencies)
+    note_frequencies.set_index(np.arange(-1, octaves + 1), inplace = True)
     note_frequencies.index.name = "octave"
     
     return note_frequencies
@@ -99,25 +106,26 @@ def generate_scale_names(names = NOTE_NAMES, octaves = OCTAVES):
 
     note_names = {}
         
-    for semitone, name in enumerate(names):
+    for semitone, name in enumerate(names, start = 1):
         
         note_names[name] = []
         
-        for octave in range(octaves):
+        for octave in range(-1, octaves + 1):
             
             designation = f"{name}{octave}"
-                        
+            
             note_names[name].append(designation)
     
     note_names = pd.DataFrame(note_names)
+    note_names.set_index(np.arange(-1, octaves + 1), inplace = True)
     note_names.index.name = "octave"
     
     return note_names
 
 
-def generate_musical_scale(names               = NOTE_NAMES,
-                           octaves             = OCTAVES,
-                           reference_frequency = SUBCONTRA_C):
+def generate_music_scale(names               = NOTE_NAMES,
+                         octaves             = OCTAVES,
+                         reference_frequency = SUBCONTRA_C):
     
     """
     
@@ -134,19 +142,100 @@ def generate_musical_scale(names               = NOTE_NAMES,
     
     names           = note_names.values.flatten()
     frequencies     = note_frequencies.values.flatten()
-    number_of_notes = semitones * octaves
+    number_of_notes = semitones * (octaves + 2)
         
     notes = {names[i] : frequencies[i] for i in range(number_of_notes)}
     notes = pd.Series(notes)
     
     return notes
 
+
+def generate_major_thirds():
     
-def play_sound(frequency,
-               duration      = 1.0,
-               volume        = 1.0,
-               wavefunction  = wavefunctions.sine_wave,
-               sampling_rate = 44100):
+    """
+    
+    Generates an array of frequencies of major thirds.
+    
+    """
+    
+    frequencies = generate_music_scale()
+    notes       = pd.Series(frequencies.index.values, index = frequencies)
+    
+    note_pairs    = np.array(list(combinations(frequencies, 2)))
+    desired_ratio = round(frequencies["E4"] / frequencies["C4"], 2)
+    ratios        = np.round(note_pairs[:, 1] / note_pairs[:, 0], 2)
+    
+    frequencies_to_notes = np.vectorize(lambda frequency: notes[frequency])
+    
+    major_third_frequency_pairs = note_pairs[ratios == desired_ratio]
+    major_third_note_pairs = frequencies_to_notes(major_third_frequency_pairs)
+    
+    return major_third_note_pairs
+
+
+def generate_midi_major_thirds():
+    
+    """
+    
+    Generates an array of MIDI scales of major thirds.
+    
+    """
+    
+    midi_map = generate_midi_scale(enforce_range = False)
+    notes    = generate_major_thirds()
+    
+    notes_to_midi = np.vectorize(lambda note: midi_map[note])
+    
+    midi = notes_to_midi(notes)
+    mask = np.all((MIDI_MINIMUM <= midi) & (midi <= MIDI_MAXIMUM), axis = 1)
+    midi = midi[mask]
+    
+    return midi
+    
+
+def generate_midi_scale(enforce_range = True):
+    
+    """
+    
+    Generates the MIDI note scale from Stuttgart pitch.
+    
+    """
+    
+    notes = generate_music_scale()
+    midi  = (SEMITONES * np.log2(notes / notes["A4"]) + 69).astype(np.int8)
+    
+    if enforce_range:
+        
+        mask = (MIDI_MINIMUM <= midi) & (midi <= MIDI_MAXIMUM)
+        midi = midi[mask]
+    
+    return midi
+
+    
+def generate_waveform(frequencies,
+                      duration      = 1.0,
+                      volume        = 1.0,
+                      wavefunction  = wavefunctions.sine_wave,
+                      sampling_rate = 44100):
+    
+    """
+    
+    Sums frequencies to generate a waveform.
+    
+    """
+    
+    frequencies = np.asarray(frequencies)
+    
+    waveform = np.zeros(np.floor(sampling_rate * duration).astype(np.uint32))
+    
+    for frequency in frequencies:
+        
+        waveform += wavefunction(frequency, duration, volume, sampling_rate)
+        
+    return waveform
+    
+    
+def play_sound(waveform, sampling_rate = 44100):
     
     """
     
@@ -155,8 +244,7 @@ def play_sound(frequency,
     """
     
     player   = pyaudio.PyAudio()
-    waveform = wavefunction(frequency, duration, volume, sampling_rate)
-        
+    
     stream_kwargs = {"format"   : pyaudio.paFloat32,
                      "channels" : 1,
                      "rate"     : sampling_rate,

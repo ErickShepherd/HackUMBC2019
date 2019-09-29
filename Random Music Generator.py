@@ -1,3 +1,6 @@
+from midiutil.MidiFile import MIDIFile
+import math
+import random
 
 FLAT = "b"
 DOUBLE_FLAT = "bb"
@@ -10,28 +13,10 @@ MIDI_BASS_CLEF = list(range(40, 67))
 NOTE_VALUES = [1, 2, 4]
 
 
-from midiutil.MidiFile import MIDIFile
-import math
-import random
-
 def isPowerTwo(num):
     
     return num != 0 and ((num & (num - 1)) == 0)
 
-def getKeySig():
-
-    keySig = input("Please enter your key signature: ")
-    # note name plus max two sharps or flats, no mixing of sharps and flats
-    while keySig[0] not in NOTE_NAMES:
-        print("This is not a valid key.")
-        keySig = input("Please enter your key signature: ")
-    while len(keySig) == 3 and keySig[1] != keySig[2]:
-        print("This is not a valid key.")
-        keySig = input("Please enter your key signature: ")
-    while len(keySig) < 1 or len(keySig) > 3:
-        print("This is not a valid key.")
-        keySig = input("Please enter your key signature: ")
-    return keySig
 
 def getNumBars():
 
@@ -42,6 +27,7 @@ def getNumBars():
         numBars = int(input("Please enter the number of measures: "))
     return numBars
 
+
 def getMeasureBeats():
 
     numBeats = int(input("Please enter the number of beats in the measure: "))
@@ -49,6 +35,7 @@ def getMeasureBeats():
         print("This is not a valid number of beats.")
         numBeats = int(input("Please enter the number of beats in the measure: "))
     return numBeats
+
 
 def getSubDiv():
 
@@ -60,6 +47,7 @@ def getSubDiv():
         numSubDiv = int(input("Please enter the number of subdivisions in the measure: "))
         subDivBool = isPowerTwo(numSubDiv)
     return numSubDiv
+    
     
 def getTempo():
 
@@ -88,8 +76,6 @@ if __name__ == "__main__":
     tempo = getTempo()
 
     # gets key signature 
-    # keySig = getKeySig()
-
     # asks user how many measures they want the song to be
     numBars = getNumBars()
 
