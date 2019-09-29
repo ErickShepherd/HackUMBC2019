@@ -18,6 +18,7 @@ Summary:
 """
 
 # Third party imports.
+import matplotlib.pyplot as plt
 import numpy as np
 from midiutil.MidiFile import MIDIFile
 
@@ -38,16 +39,46 @@ def populate(midi_file):
     duration = 2   # In beats
     volume   = 100 # 0-127, 127 being full volume
     
-    m = music_scale.generate_midi_major_thirds()
-        
-    for time in range(100):
+    plt.figure()
     
-        for pair in m[np.random.choice(np.arange(m.shape[0]), 100)]:
-                        
-            for pitch in pair:
-                                
-                midi_file.addNote(track, channel, pitch, time, duration, volume, annotation = None)
+    m = music_scale.generate_midi_minor_thirds()
+    
+    idx_gen = np.random.normal((2 ** 7 - 1) / 8 * 5, 2, 1000).astype(np.int64)
+    # idx_gen = np.random.choice(np.arange(m.shape[0]), 100)
+    
+    for time, pair in enumerate(m[idx_gen]):
+        
+        plt.scatter(*pair)
 
+        for pitch in pair:
+
+            midi_file.addNote(track, channel, pitch, time, duration, volume, annotation = None)
+            
+            
+    idx_gen = np.random.normal((2 ** 7 - 1) / 8 * 4, 2, 1000).astype(np.int64)
+    # idx_gen = np.random.choice(np.arange(m.shape[0]), 100)
+    
+    for time, pair in enumerate(m[idx_gen]):
+        
+        plt.scatter(*pair)
+
+        for pitch in pair:
+
+            midi_file.addNote(track, channel, pitch, time, duration, volume, annotation = None)
+
+            
+    idx_gen = np.random.normal((2 ** 7 - 1) / 8 * 2, 2, 1000).astype(np.int64)
+    # idx_gen = np.random.choice(np.arange(m.shape[0]), 100)
+    
+    for time, pair in enumerate(m[idx_gen]):
+        
+        plt.scatter(*pair)
+
+        for pitch in pair:
+
+            midi_file.addNote(track, channel, pitch, time, duration, volume, annotation = None)
+
+            
     return midi_file
 
 
@@ -73,3 +104,7 @@ def make_midi_file():
     with open(filename, "wb") as output_file:
         
         midi_file.writeFile(output_file)
+
+make_midi_file()
+plt.show()
+        

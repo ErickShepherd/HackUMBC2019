@@ -150,6 +150,49 @@ def generate_music_scale(names               = NOTE_NAMES,
     return notes
 
 
+def generate_minor_thirds():
+    
+    """
+    
+    Generates an array of frequencies of minor thirds.
+    
+    """
+    
+    frequencies = generate_music_scale()
+    notes       = pd.Series(frequencies.index.values, index = frequencies)
+    
+    note_pairs    = np.array(list(combinations(frequencies, 2)))
+    desired_ratio = round(frequencies["A4"] / frequencies["C4"], 2)
+    ratios        = np.round(note_pairs[:, 1] / note_pairs[:, 0], 2)
+    
+    frequencies_to_notes = np.vectorize(lambda frequency: notes[frequency])
+    
+    minor_third_frequency_pairs = note_pairs[ratios == desired_ratio]
+    minor_third_note_pairs = frequencies_to_notes(minor_third_frequency_pairs)
+    
+    return minor_third_note_pairs
+
+
+def generate_midi_minor_thirds():
+    
+    """
+    
+    Generates an array of MIDI scales of minor thirds.
+    
+    """
+    
+    midi_map = generate_midi_scale(enforce_range = False)
+    notes    = generate_minor_thirds()
+    
+    notes_to_midi = np.vectorize(lambda note: midi_map[note])
+    
+    midi = notes_to_midi(notes)
+    mask = np.all((MIDI_MINIMUM <= midi) & (midi <= MIDI_MAXIMUM), axis = 1)
+    midi = midi[mask]
+    
+    return midi
+
+
 def generate_major_thirds():
     
     """
@@ -191,8 +234,51 @@ def generate_midi_major_thirds():
     midi = midi[mask]
     
     return midi
+
+
+def generate_major_chords():
+    
+    """
+    
+    Generates an array of frequencies of major chords.
+    
+    """
+    
+    frequencies = generate_music_scale()
+    notes       = pd.Series(frequencies.index.values, index = frequencies)
+    
+    note_pairs    = np.array(list(combinations(frequencies, 2)))
+    desired_ratio = round(frequencies["E4"] / frequencies["C4"], 2)
+    ratios        = np.round(note_pairs[:, 1] / note_pairs[:, 0], 2)
+    
+    frequencies_to_notes = np.vectorize(lambda frequency: notes[frequency])
+    
+    major_chord_frequency_pairs = note_pairs[ratios == desired_ratio]
+    major_chord_note_pairs = frequencies_to_notes(major_chord_frequency_pairs)
+    
+    return major_chord_note_pairs
     
 
+def generate_midi_major_chords():
+    
+    """
+    
+    Generates an array of MIDI scales of major chords.
+    
+    """
+    
+    midi_map = generate_midi_scale(enforce_range = False)
+    notes    = generate_major_chords()
+    
+    notes_to_midi = np.vectorize(lambda note: midi_map[note])
+    
+    midi = notes_to_midi(notes)
+    mask = np.all((MIDI_MINIMUM <= midi) & (midi <= MIDI_MAXIMUM), axis = 1)
+    midi = midi[mask]
+    
+    return midi
+    
+    
 def generate_midi_scale(enforce_range = True):
     
     """
