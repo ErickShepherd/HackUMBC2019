@@ -17,6 +17,20 @@ def isPowerTwo(num):
     
     return num != 0 and ((num & (num - 1)) == 0)
 
+def getKeySig():
+
+    keySig = input("Please enter your key signature: ")
+    # note name plus max two sharps or flats, no mixing of sharps and flats
+    while keySig[0] not in NOTE_NAMES:
+        print("This is not a valid key.")
+        keySig = input("Please enter your key signature: ")
+    while len(keySig) == 3 and keySig[1] != keySig[2]:
+        print("This is not a valid key.")
+        keySig = input("Please enter your key signature: ")
+    while len(keySig) < 1 or len(keySig) > 3:
+        print("This is not a valid key.")
+        keySig = input("Please enter your key signature: ")
+    return keySig
 
 def getNumBars():
 
@@ -27,7 +41,6 @@ def getNumBars():
         numBars = int(input("Please enter the number of measures: "))
     return numBars
 
-
 def getMeasureBeats():
 
     numBeats = int(input("Please enter the number of beats in the measure: "))
@@ -35,7 +48,6 @@ def getMeasureBeats():
         print("This is not a valid number of beats.")
         numBeats = int(input("Please enter the number of beats in the measure: "))
     return numBeats
-
 
 def getSubDiv():
 
@@ -47,7 +59,6 @@ def getSubDiv():
         numSubDiv = int(input("Please enter the number of subdivisions in the measure: "))
         subDivBool = isPowerTwo(numSubDiv)
     return numSubDiv
-    
     
 def getTempo():
 
@@ -74,8 +85,11 @@ if __name__ == "__main__":
     track_name = input("What do you want to call the track? ")
     MyMIDI.addTrackName(track, time, track_name)
     tempo = getTempo()
+    MyMIDI.addTempo(track, time, tempo)
 
     # gets key signature 
+    # keySig = getKeySig()
+
     # asks user how many measures they want the song to be
     numBars = getNumBars()
 
@@ -104,5 +118,3 @@ if __name__ == "__main__":
     binfile = open(name_file, 'wb')
     MyMIDI.writeFile(binfile)
     binfile.close()
-
-
