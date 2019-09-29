@@ -32,7 +32,7 @@ __version__ = "1.1.0"
 # Constant definitions.
 SUBCONTRA_C = 16.352
 SEMITONES   = 12
-OCTAVES     = 8
+OCTAVES     = 9
 NOTE_NAMES  = ["C",  "C#", "D",  "D#",
                "E",  "F",  "F#", "G",
                "G#", "A",  "A#", "B"]
