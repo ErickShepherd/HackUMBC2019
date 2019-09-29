@@ -4,7 +4,7 @@ A module to generate midi files
 
 Module metadata:
 
-    Author 01:      Thomas Owens (OwensT30@gmail.com)
+    Author 01:      Thomas Owens   (OwensT30@gmail.com)
     Author 02:      Erick Shepherd (ErickShepherd@UMBC.edu)
     Event:          HackUMBC Fall 2019
     Team:           Swan Song
