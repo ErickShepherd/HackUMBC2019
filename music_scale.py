@@ -22,7 +22,7 @@ Summary:
 from itertools import combinations
 
 # Third party imports.
-import pyaudio
+#import pyaudio
 import numpy as np
 import pandas as pd
 
@@ -321,25 +321,25 @@ def generate_waveform(frequencies,
     return waveform
     
     
-def play_sound(waveform, sampling_rate = 44100):
-    
-    """
-    
-    Plays a sound.
-    
-    """
-    
-    player   = pyaudio.PyAudio()
-    
-    stream_kwargs = {"format"   : pyaudio.paFloat32,
-                     "channels" : 1,
-                     "rate"     : sampling_rate,
-                     "output"   : True}
-    
-    stream = player.open(**stream_kwargs)
-
-    stream.write(waveform)
-    stream.stop_stream()
-    stream.close()
-
-    player.terminate()
+#def play_sound(waveform, sampling_rate = 44100):
+#    
+#    """
+#    
+#    Plays a sound.
+#    
+#    """
+#    
+#    player   = pyaudio.PyAudio()
+#    
+#    stream_kwargs = {"format"   : pyaudio.paFloat32,
+#                     "channels" : 1,
+#                     "rate"     : sampling_rate,
+#                     "output"   : True}
+#    
+#    stream = player.open(**stream_kwargs)
+#
+#    stream.write(waveform)
+#    stream.stop_stream()
+#    stream.close()
+#
+#    player.terminate()
