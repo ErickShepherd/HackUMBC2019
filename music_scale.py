@@ -7,7 +7,7 @@ Module metadata:
     Author:         Erick Shepherd
     E-mail:         ErickShepherd@UMBC.edu
     Event:          HackUMBC Fall 2019
-    Team:           Team Swan Song
+    Team:           Swan Song
     Date created:   2019-09-29
     Last updated:   2019-09-29
 
