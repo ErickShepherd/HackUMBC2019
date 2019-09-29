@@ -30,6 +30,34 @@ __author__  = ["Thomas Owens", "Erick Shepherd"]
 __version__ = "1.0.0"
 
 
+def normal_indices(mean, std, size):
+    
+    """
+    
+    mean: int [0, 127]
+    std:  int [0, 127]
+    size: int
+    
+    """
+    
+    indices = np.random.normal(mean, std, size).astype(np.int64)
+    
+    return indices
+
+
+def make_melody():
+    
+    pass
+
+
+def make_beat(length,
+              mean_frequency,
+              standard_deviation,
+              repetitions):
+
+    pass
+    
+    
 def populate(midi_file):
     
     track    = 0   # Track numbers are zero-origined
