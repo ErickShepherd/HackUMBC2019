@@ -43,32 +43,10 @@ def populate(midi_file):
     
     m = music_scale.generate_midi_minor_thirds()
     
-    idx_gen = np.random.normal((2 ** 7 - 1) / 8 * 5, 2, 1000).astype(np.int64)
-    # idx_gen = np.random.choice(np.arange(m.shape[0]), 100)
-    
-    for time, pair in enumerate(m[idx_gen]):
-        
-        plt.scatter(*pair)
-
-        for pitch in pair:
-
-            midi_file.addNote(track, channel, pitch, time, duration, volume, annotation = None)
-            
-            
-    idx_gen = np.random.normal((2 ** 7 - 1) / 8 * 4, 2, 1000).astype(np.int64)
-    # idx_gen = np.random.choice(np.arange(m.shape[0]), 100)
-    
-    for time, pair in enumerate(m[idx_gen]):
-        
-        plt.scatter(*pair)
-
-        for pitch in pair:
-
-            midi_file.addNote(track, channel, pitch, time, duration, volume, annotation = None)
-
-            
     idx_gen = np.random.normal((2 ** 7 - 1) / 8 * 2, 2, 1000).astype(np.int64)
     # idx_gen = np.random.choice(np.arange(m.shape[0]), 100)
+    
+    idx_gen = np.repeat(idx_gen, 4)[:idx_gen.size]
     
     for time, pair in enumerate(m[idx_gen]):
         
@@ -99,7 +77,7 @@ def make_midi_file():
 #    duration = 1   # In beats
 #    volume   = 100 # 0-127, 127 being full volume
     
-    filename = "sandwich.midi"
+    filename = "basshit.midi"
     
     with open(filename, "wb") as output_file:
         
